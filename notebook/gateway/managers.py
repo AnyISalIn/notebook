@@ -544,6 +544,8 @@ class GatewayKernelSpecManager(KernelSpecManager):
         self.log.debug("Request list kernel specs at: %s", kernel_spec_url)
         response = yield gateway_request(kernel_spec_url, method='GET')
         kernel_specs = json_decode(response.body)
+        if self.whitelist:
+            kernel_specs['kernelspecs'] = {name: spec for name, spec in kernel_specs['kernelspecs'].items() if name in self.whitelist}
         raise gen.Return(kernel_specs)
 
     @gen.coroutine
